@@ -2,26 +2,23 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import *
 import matplotlib.pyplot as plt
-import math
-import argparse
+import math,os,argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_directory', type=str, default = './', help='Directory where csv files are stored')
 args = parser.parse_args()
 
 def getfile(filename):
-    root= args.data_directory
+    root="./"
     file = root+filename+'.csv'
     df = pd.read_csv(file,header=None)
     df = np.asarray(df)
-
     
     labels=[]
     for i in range(316):
         labels.append(0)
     for i in range(854):
         labels.append(1)
-    labels = np.asarray(labels)
     
     labels = np.asarray(labels)
     return df,labels
@@ -72,17 +69,21 @@ def get_weights(matrix):
         m = matrix[i]
         w = 0
         for j in range(m.shape[0]):
-            #w+=2**m[j]
-            w+=1+math.log(1+m[j])
-            #w+=anger_func(m[j])
+            w+=anger_func(m[j])
         weights.append(w)
     return weights
 
+root = args.data_directory
 
-p1,labels = getfile("resnet18")
-p2,_ = getfile("mobile")
+if root[-1]!='/':
+    root += '/'
+csv_list = os.listdir(root)
 
-ensemble_prob = get_scores(labels,p1,p2)
+p1,labels = getfile(root+csv_list[0].split('.')[0])
+p2,_ = getfile(root+csv_list[1].split('.')[0])
+p3,_ = getfile(root+csv_list[2].split('.')[0])
+
+ensemble_prob = get_scores(labels,p1,p2,p3)
 
 
 preds = predicting(ensemble_prob)
@@ -92,5 +93,3 @@ total = labels.shape[0]
 print("Accuracy = ",correct/total)
 classes = ['Normal','Pneumonia']
 metrics(labels,preds,classes)
-
-
