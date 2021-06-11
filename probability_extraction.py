@@ -198,22 +198,37 @@ import numpy as np
 f = open(data_dir+"/vgg19.csv",'w+',newline = '')
 writer = csv.writer(f)
 
+saving = []
 with torch.no_grad():
       num = 0
       temp_array = np.zeros((len(testloader),num_classes))
-      for data in testloader:
+      for i,data in enumerate(testloader):
           images, labels = data
+          sample_fname, _ = testloader.dataset.samples[i]
           labels=labels.cuda()
           outputs = model(images.cuda())
           _, predicted = torch.max(outputs, 1)
           total += labels.size(0)
           correct += (predicted == labels.cuda()).sum().item()
           prob = torch.nn.functional.softmax(outputs, dim=1)
+          saving.append(sample_fname.split('/')[-1])
           temp_array[num] = np.asarray(prob[0].tolist()[0:num_classes])
           num+=1
 print("Accuracy = ",100*correct/total)
 
 for i in range(len(testloader)):
-  writer.writerow(temp_array[i].tolist())
+  k = temp_array[i].tolist()
+  k.append(saving[i])
+  writer.writerow(k)
 
+f.close()
+
+f = open(data_dir+"/labels.csv",'w+',newline = '')
+writer = csv.writer(f)
+for i,data in enumerate(testloader):
+  _, labels = data
+  sample_fname, _ = testloader.dataset.samples[i]
+  sample = sample_fname.split('/')[-1]
+  lab = labels.tolist()[0]
+  writer.writerow([sample,lab])
 f.close()
