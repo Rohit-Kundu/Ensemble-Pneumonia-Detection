@@ -8,7 +8,11 @@ To install the dependencies, run the following using the command prompt:
 
 `pip install -r requirements.txt`
 
-## Running the code on the Pneumonia data
+## Running the codes on Pneumonia data
+
+The two datasets used in the paper can be found:
+1. Dataset by Kermany et al.: https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia
+2. RSNA Pneumonia Detection challenge dataset: https://www.kaggle.com/c/rsna-pneumonia-detection-challenge
 
 Required Directory Structure:
 ```
