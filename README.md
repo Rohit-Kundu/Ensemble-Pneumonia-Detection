@@ -17,7 +17,7 @@ Required Directory Structure:
 |   +-- train
 |   +-- val
 +-- pneumonia_csv
-|   +--.
+|   +-- .
 |   +-- googlenet.csv
 |   +-- resnet18.csv
 |   +-- densenet121.csv
