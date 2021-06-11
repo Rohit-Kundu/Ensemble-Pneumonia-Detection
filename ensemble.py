@@ -6,6 +6,7 @@ import math,os,argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_directory', type=str, default = './', help='Directory where csv files are stored')
+parser.add_argument('--labels', type=str, default = './labels.csv', help='File path for labels')
 args = parser.parse_args()
 
 def getfile(filename):
@@ -13,15 +14,14 @@ def getfile(filename):
     file = root+filename+'.csv'
     df = pd.read_csv(file,header=None)
     df = np.asarray(df)
-    
-    labels=[]
-    for i in range(316):
-        labels.append(0)
-    for i in range(854):
-        labels.append(1)
-    
-    labels = np.asarray(labels)
-    return df,labels
+    return df
+
+def getlabels(filename):
+    root="./"
+    file = root+filename+'.csv'
+    df = pd.read_csv(file,header=None)
+    df = np.asarray(df)[:,1]
+    return df.astype(int)
 
 def predicting(ensemble_prob):
     prediction = np.zeros((ensemble_prob.shape[0],))
@@ -44,13 +44,19 @@ def get_scores(labels,*argv):
     #outputs matrix of shape (no. of arg, 4) of precision, recall, f1-score, Area Under Curve
     count = len(argv)
     metrics = np.zeros(shape=(4,count))
+    num_classes = np.unique(labels).shape[0]
     for i,arg in enumerate(argv):
         preds = predicting(arg)
-        acc = accuracy_score(labels,preds)
-        pre = precision_score(labels,preds)
-        rec = recall_score(labels,preds)
-        f1 = f1_score(labels,preds)
-        auc = roc_auc_score(labels,preds)
+        if num_classes==2:
+            pre = precision_score(labels,preds)
+            rec = recall_score(labels,preds)
+            f1 = f1_score(labels,preds)
+            auc = roc_auc_score(labels,preds)
+        else:
+            pre = precision_score(labels,preds,average='macro')
+            rec = recall_score(labels,preds,average='macro')
+            f1 = f1_score(labels,preds,average='macro')
+            auc = roc_auc_score(labels,arg,average='macro',multi_class='ovo')
         metrics[:,i] = np.array([pre,rec,f1,auc])
     weights = get_weights(np.transpose(metrics))
     print("Weights: ",weights)
@@ -79,9 +85,14 @@ if root[-1]!='/':
     root += '/'
 csv_list = os.listdir(root)
 
-p1,labels = getfile(root+csv_list[0].split('.')[0])
-p2,_ = getfile(root+csv_list[1].split('.')[0])
-p3,_ = getfile(root+csv_list[2].split('.')[0])
+p1, = getfile(root+csv_list[0].split('.')[0])
+p2, = getfile(root+csv_list[1].split('.')[0])
+p3, = getfile(root+csv_list[2].split('.')[0])
+
+labels_file = args.labels
+if '.csv' not in labels_file:
+    labels_file+='.csv'
+labels = getlabels(labels_file)
 
 ensemble_prob = get_scores(labels,p1,p2,p3)
 
