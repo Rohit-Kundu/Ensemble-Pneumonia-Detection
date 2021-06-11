@@ -9,6 +9,23 @@ To install the dependencies, run the following using the command prompt:
 `pip install -r requirements.txt`
 
 ## Running the code on the Pneumonia data
+
+Required Directory Structure:
+```
++-- data
+|   +-- .
+|   +-- train
+|   +-- val
++-- pneumonia_csv
+|   +--.
+|   +-- googlenet.csv
+|   +-- resnet18.csv
+|   +-- densenet121.csv
++-- labels.csv
++-- main.py
++-- probability_extraction
+```
+
 To extract the probabilities on the validation set using the different models run `probability_extraction.py` and save the files in a folder.
 
 Next, to run the ensemble model on the base learners run the following:
