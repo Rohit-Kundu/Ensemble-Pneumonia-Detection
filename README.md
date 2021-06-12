@@ -42,4 +42,4 @@ To extract the probabilities on the validation set using the different models ru
 
 Next, to run the ensemble model on the base learners run the following:
 
-`python main.py --data_directory "pneumonia_csv/" --labels "labels.csv"`
+`python main.py --root_train "train_csv/" --root_test "test_csv/" --train_labels "train_labels.csv" --test_labels "test_labels.csv"`
