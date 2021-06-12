@@ -17,7 +17,7 @@ def getfile(filename):
     if '.csv' not in file:
         file+='.csv'
     df = pd.read_csv(file,header=None)
-    df = np.asarray(df)#[:,:-1] #Since last column has image names
+    df = np.asarray(df)[:,:-1] #Since last column has image names
     return df
 
 def getlabels(filename):
