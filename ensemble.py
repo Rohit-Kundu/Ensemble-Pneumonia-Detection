@@ -13,14 +13,18 @@ args = parser.parse_args()
 
 def getfile(filename):
     root="./"
-    file = root+filename+'.csv'
+    file = root+filename
+    if '.csv' not in file:
+        file+='.csv'
     df = pd.read_csv(file,header=None)
-    df = np.asarray(df)[:,:-1] #Since last column has image names
+    df = np.asarray(df)#[:,:-1] #Since last column has image names
     return df
 
 def getlabels(filename):
     root="./"
-    file = root+filename+'.csv'
+    file = root+filename
+    if '.csv' not in file:
+        file+='.csv'
     df = pd.read_csv(file,header=None)
     df = np.asarray(df)[:,1] #Since first column has image names
     return df.astype(int)
@@ -40,7 +44,6 @@ def metrics(labels,predictions,classes):
     print("Confusion matrix:")
     print(matrix)
     print("\nClasswise Accuracy :{}".format(matrix.diagonal()/matrix.sum(axis = 1)))
-    print("\nBalanced Accuracy Score: ",balanced_accuracy_score(labels,predictions))
 
 def get_scores(labels,*argv):
     #outputs matrix of shape (no. of arg, 4) of precision, recall, f1-score, Area Under Curve
@@ -83,18 +86,18 @@ if root_test[-1]!='/':
     root_test += '/'
 
 csv_list = os.listdir(root_train)
-p1_train, = getfile(root_train+csv_list[0].split('.')[0])
-p2_train, = getfile(root_train+csv_list[1].split('.')[0])
-p3_train, = getfile(root_train+csv_list[2].split('.')[0])
+p1_train = getfile(root_train+csv_list[0].split('.')[0])
+p2_train = getfile(root_train+csv_list[1].split('.')[0])
+p3_train = getfile(root_train+csv_list[2].split('.')[0])
 
 train_labels = args.train_labels
 if '.csv' not in train_labels:
     train_labels+='.csv'
 train_labels = getlabels(train_labels)
 
-p1_test, = getfile(root_test+csv_list[0].split('.')[0].split('_')[0]+'_test')
-p2_test, = getfile(root_test+csv_list[1].split('.')[0].split('_')[0]+'_test')
-p3_test, = getfile(root_test+csv_list[2].split('.')[0].split('_')[0]+'_test')
+p1_test = getfile(root_test+csv_list[0].split('.')[0].replace('train','test'))
+p2_test = getfile(root_test+csv_list[1].split('.')[0].replace('train','test'))
+p3_test = getfile(root_test+csv_list[2].split('.')[0].replace('train','test'))
 
 test_labels = args.test_labels
 if '.csv' not in test_labels:
