@@ -22,14 +22,20 @@ Required Directory Structure:
 |   +-- .
 |   +-- train
 |   +-- val
-+-- pneumonia_csv
++-- train_csv
 |   +-- .
-|   +-- googlenet.csv
-|   +-- resnet18.csv
-|   +-- densenet121.csv
-+-- labels.csv
+|   +-- googlenet_train.csv
+|   +-- resnet18_train.csv
+|   +-- densenet121_train.csv
++-- test_csv
+|   +-- .
+|   +-- googlenet_test.csv
+|   +-- resnet18_test.csv
+|   +-- densenet121_test.csv
 +-- main.py
 +-- probability_extraction
++-- train_labels.csv
++-- test_labels.csv
 ```
 
 To extract the probabilities on the validation set using the different models run `probability_extraction.py` and save the files in a folder.
