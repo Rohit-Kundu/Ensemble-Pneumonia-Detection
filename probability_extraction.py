@@ -154,22 +154,21 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25,model_name
     model.load_state_dict(best_model_wts)
     return model
 
-model = models.vgg11(pretrained = True)
+model = models.resnet18(pretrained = True)
 
-#num_ftrs = model.fc.in_features  ##for wideresnet-50-2
-num_ftrs = model.classifier[0].in_features  ## for vgg11
-
+num_ftrs = model.fc.in_features  ##for googlenet, resnet18
+#num_ftrs = model.classifier.in_features  ## for densenet169
 print("Number of features: "+str(num_ftrs))
-# Here the size of each output sample is set to 2.
 
-#model.fc = nn.Linear(num_ftrs, num_classes) ## for wideresnet-50-2
-model.classifier = nn.Linear(num_ftrs, num_classes) ## for vgg11
+
+model.fc = nn.Linear(num_ftrs, num_classes)  ##for googlenet, resnet18
+#model.classifier = nn.Linear(num_ftrs, num_classes) ## for densenet169
 model = model.to(device)
 
 criterion = nn.CrossEntropyLoss()
 
 # Observe that all parameters are being optimized
-optimizer = optim.SGD(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
 # StepLR Decays the learning rate of each parameter group by gamma every step_size epochs
 # Decay LR by a factor of 0.1 every 7 epochs
@@ -182,11 +181,12 @@ optimizer = optim.SGD(model.parameters(), lr=0.001)
 
 step_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size = 10, gamma=0.1)
 
-model = train_model(model, criterion, optimizer, step_lr_scheduler, num_epochs=50, model_name = "vgg11")
+model = train_model(model, criterion, optimizer, step_lr_scheduler, num_epochs=30, model_name = "resnet18")
 
 
 # Getting Proba distribution
 print("\nGetting the Probability Distribution")
+trainloader=torch.utils.data.DataLoader(image_datasets['train'],batch_size=1)
 testloader=torch.utils.data.DataLoader(image_datasets['val'],batch_size=1)
 
 
@@ -195,7 +195,50 @@ correct = 0
 total = 0
 import csv
 import numpy as np
-f = open(data_dir+"/vgg19.csv",'w+',newline = '')
+
+
+#Train Probabilities
+f = open(data_dir+"/resnet18_train.csv",'w+',newline = '')
+writer = csv.writer(f)
+
+saving = []
+with torch.no_grad():
+      num = 0
+      temp_array = np.zeros((len(trainloader),num_classes))
+      for i,data in enumerate(trainloader):
+          images, labels = data
+          sample_fname, _ = trainloader.dataset.samples[i]
+          labels=labels.cuda()
+          outputs = model(images.cuda())
+          _, predicted = torch.max(outputs, 1)
+          total += labels.size(0)
+          correct += (predicted == labels.cuda()).sum().item()
+          prob = torch.nn.functional.softmax(outputs, dim=1)
+          saving.append(sample_fname.split('/')[-1])
+          temp_array[num] = np.asarray(prob[0].tolist()[0:num_classes])
+          num+=1
+print("Train Accuracy = ",100*correct/total)
+
+for i in range(len(trainloader)):
+  k = temp_array[i].tolist()
+  k.append(saving[i])
+  writer.writerow(k)
+
+f.close()
+
+f = open(data_dir+"/train_labels.csv",'w+',newline = '')
+writer = csv.writer(f)
+for i,data in enumerate(testloader):
+  _, labels = data
+  sample_fname, _ = testloader.dataset.samples[i]
+  sample = sample_fname.split('/')[-1]
+  lab = labels.tolist()[0]
+  writer.writerow([sample,lab])
+f.close()
+
+
+#Test Probabilities
+f = open(data_dir+"/resnet18_test.csv",'w+',newline = '')
 writer = csv.writer(f)
 
 saving = []
@@ -214,7 +257,7 @@ with torch.no_grad():
           saving.append(sample_fname.split('/')[-1])
           temp_array[num] = np.asarray(prob[0].tolist()[0:num_classes])
           num+=1
-print("Accuracy = ",100*correct/total)
+print("Test Accuracy = ",100*correct/total)
 
 for i in range(len(testloader)):
   k = temp_array[i].tolist()
@@ -223,7 +266,7 @@ for i in range(len(testloader)):
 
 f.close()
 
-f = open(data_dir+"/labels.csv",'w+',newline = '')
+f = open(data_dir+"/test_labels.csv",'w+',newline = '')
 writer = csv.writer(f)
 for i,data in enumerate(testloader):
   _, labels = data
