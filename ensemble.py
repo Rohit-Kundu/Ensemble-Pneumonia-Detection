@@ -5,22 +5,24 @@ import matplotlib.pyplot as plt
 import math,os,argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_directory', type=str, default = './', help='Directory where csv files are stored')
-parser.add_argument('--labels', type=str, default = './labels.csv', help='File path for labels')
+parser.add_argument('--root_train', type=str, required = True, help='Directory where train csv files are stored')
+parser.add_argument('--train_labels', type=str, required = True, help='File path for train labels')
+parser.add_argument('--root_test', type=str, required = True, help='Directory where test csv files are stored')
+parser.add_argument('--test_labels', type=str, required = True, help='File path for test labels')
 args = parser.parse_args()
 
 def getfile(filename):
     root="./"
     file = root+filename+'.csv'
     df = pd.read_csv(file,header=None)
-    df = np.asarray(df)
+    df = np.asarray(df)[:,:-1] #Since last column has image names
     return df
 
 def getlabels(filename):
     root="./"
     file = root+filename+'.csv'
     df = pd.read_csv(file,header=None)
-    df = np.asarray(df)[:,1]
+    df = np.asarray(df)[:,1] #Since first column has image names
     return df.astype(int)
 
 def predicting(ensemble_prob):
@@ -59,15 +61,8 @@ def get_scores(labels,*argv):
             auc = roc_auc_score(labels,arg,average='macro',multi_class='ovo')
         metrics[:,i] = np.array([pre,rec,f1,auc])
     weights = get_weights(np.transpose(metrics))
-    print("Weights: ",weights)
-    ensemble_prob = 0
-    for i,arg in enumerate(argv):
-        ensemble_prob+=weights[i]*arg
-    return ensemble_prob
-
-def anger_func(theta):
-    result = (math.cos(2*theta-2*math.sin(theta)))/math.pi
-    return result
+    #print("Weights: ",weights)
+    return weights
 
 def get_weights(matrix):
     weights = []
@@ -75,32 +70,44 @@ def get_weights(matrix):
         m = matrix[i]
         w = 0
         for j in range(m.shape[0]):
-            w+=anger_func(m[j])
+            w+=np.tanh(m[j])
         weights.append(w)
     return weights
 
-root = args.data_directory
+root_train = args.root_train
+if root_train[-1]!='/':
+    root_train += '/'
 
-if root[-1]!='/':
-    root += '/'
-csv_list = os.listdir(root)
+root_test = args.root_test
+if root_test[-1]!='/':
+    root_test += '/'
 
-p1, = getfile(root+csv_list[0].split('.')[0])
-p2, = getfile(root+csv_list[1].split('.')[0])
-p3, = getfile(root+csv_list[2].split('.')[0])
+csv_list = os.listdir(root_train)
+p1_train, = getfile(root_train+csv_list[0].split('.')[0])
+p2_train, = getfile(root_train+csv_list[1].split('.')[0])
+p3_train, = getfile(root_train+csv_list[2].split('.')[0])
 
-labels_file = args.labels
-if '.csv' not in labels_file:
-    labels_file+='.csv'
-labels = getlabels(labels_file)
+train_labels = args.train_labels
+if '.csv' not in train_labels:
+    train_labels+='.csv'
+train_labels = getlabels(train_labels)
 
-ensemble_prob = get_scores(labels,p1,p2,p3)
+p1_test, = getfile(root_test+csv_list[0].split('.')[0].split('_')[0]+'_test')
+p2_test, = getfile(root_test+csv_list[1].split('.')[0].split('_')[0]+'_test')
+p3_test, = getfile(root_test+csv_list[2].split('.')[0].split('_')[0]+'_test')
 
+test_labels = args.test_labels
+if '.csv' not in test_labels:
+    test_labels+='.csv'
+test_labels = getlabels(test_labels)
 
+weights = get_scores(train_labels,p1_train,p2_train,p3_train)
+
+ensemble_prob = weights[0]*p1_test+weights[1]*p2_test+weights[2]*p3_test
 preds = predicting(ensemble_prob)
-correct = np.where(preds == labels)[0].shape[0]
-total = labels.shape[0]
+correct = np.where(preds == test_labels)[0].shape[0]
+total = test_labels.shape[0]
 
 print("Accuracy = ",correct/total)
 classes = ['Normal','Pneumonia']
-metrics(labels,preds,classes)
+metrics(test_labels,preds,classes)
