@@ -11,6 +11,7 @@ parser.add_argument('--root_test', type=str, required = True, help='Directory wh
 parser.add_argument('--test_labels', type=str, required = True, help='File path for test labels')
 args = parser.parse_args()
 
+
 def getfile(filename):
     root="./"
     file = root+filename
@@ -86,23 +87,17 @@ if root_test[-1]!='/':
     root_test += '/'
 
 csv_list = os.listdir(root_train)
-p1_train = getfile(root_train+csv_list[0].split('.')[0])
-p2_train = getfile(root_train+csv_list[1].split('.')[0])
-p3_train = getfile(root_train+csv_list[2].split('.')[0])
+p1_train = getfile(root_train+csv_list[0])
+p2_train = getfile(root_train+csv_list[1])
+p3_train = getfile(root_train+csv_list[2])
 
-train_labels = args.train_labels
-if '.csv' not in train_labels:
-    train_labels+='.csv'
-train_labels = getlabels(train_labels)
+train_labels = getlabels(args.train_labels)
 
-p1_test = getfile(root_test+csv_list[0].split('.')[0].replace('train','test'))
-p2_test = getfile(root_test+csv_list[1].split('.')[0].replace('train','test'))
-p3_test = getfile(root_test+csv_list[2].split('.')[0].replace('train','test'))
+p1_test = getfile(root_test+csv_list[0].replace('train','test'))
+p2_test = getfile(root_test+csv_list[1].replace('train','test'))
+p3_test = getfile(root_test+csv_list[2].replace('train','test'))
 
-test_labels = args.test_labels
-if '.csv' not in test_labels:
-    test_labels+='.csv'
-test_labels = getlabels(test_labels)
+test_labels = getlabels(args.test_labels)
 
 weights = get_scores(train_labels,p1_train,p2_train,p3_train)
 
