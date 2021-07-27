@@ -22,14 +22,14 @@ Required Directory Structure:
 |   +-- val
 +-- train_csv
 |   +-- .
+|   +-- densenet121_train.csv
 |   +-- googlenet_train.csv
 |   +-- resnet18_train.csv
-|   +-- densenet121_train.csv
 +-- test_csv
 |   +-- .
+|   +-- densenet121_test.csv
 |   +-- googlenet_test.csv
 |   +-- resnet18_test.csv
-|   +-- densenet121_test.csv
 +-- main.py
 +-- probability_extraction
 +-- train_labels.csv
