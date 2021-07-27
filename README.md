@@ -36,7 +36,7 @@ Required Directory Structure:
 +-- test_labels.csv
 ```
 
-To extract the probabilities on the validation set using the different models run `probability_extraction.py` and save the files in a folder.
+To extract the probabilities on the dataset using the different models run `probability_extraction.py` and save the files according to the folder structure shown above.
 
 Next, to run the ensemble model on the base learners run the following:
 
