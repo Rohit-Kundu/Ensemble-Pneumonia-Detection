@@ -1,6 +1,6 @@
 # Ensemble-Pneumonia-Detection
 
-Official implementation of our paper titled "Pneumonia Detection from Chest X-ray Images using a Novel Weighted Average Ensemble Model" under peer review in Nature- PlosOne.
+Official implementation of our paper titled ["Pneumonia Detection from Chest X-ray Images using a Novel Weighted Average Ensemble Model"](https://doi.org/10.1371/journal.pone.0256630) published in Nature- PLoS One.
 
 ## Requirements
 
@@ -41,3 +41,19 @@ To extract the probabilities on the dataset using the different models run `prob
 Next, to run the ensemble model on the base learners run the following:
 
 `python main.py --root_train "train_csv/" --root_test "test_csv/" --train_labels "train_labels.csv" --test_labels "test_labels.csv"`
+
+# Citation
+If you use this repository, please consider citing our paper:
+```
+Kundu R, Das R, Geem ZW, Han GT, Sarkar R. Pneumonia detection in chest X-ray images using an ensemble of deep learning models. PLoS One. 2021 Sep 7;16(9):e0256630. doi: 10.1371/journal.pone.0256630. PMID: 34492046.
+```
+Or:
+```
+@article{kundu2021net,
+  title={Pneumonia detection in chest X-ray images using an ensemble of deep learning models},
+  author={Kundu, Rohit and Singh, Pawan Kumar and Geem, Zong Woo and Han, Gi-Tae and Sarkar, Ram},
+  journal={PLoS One},
+  year={2021},
+  publisher={Springer}
+}
+```
