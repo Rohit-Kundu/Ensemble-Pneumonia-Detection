@@ -54,6 +54,6 @@ Or:
   author={Kundu, Rohit and Singh, Pawan Kumar and Geem, Zong Woo and Han, Gi-Tae and Sarkar, Ram},
   journal={PLoS One},
   year={2021},
-  publisher={Springer}
+  publisher={Nature}
 }
 ```
