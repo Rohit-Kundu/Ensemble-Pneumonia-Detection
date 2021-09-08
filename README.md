@@ -51,7 +51,7 @@ Bibtex:
 ```
 @article{kundu2021net,
   title={Pneumonia detection in chest X-ray images using an ensemble of deep learning models},
-  author={Kundu, Rohit and Singh, Pawan Kumar and Geem, Zong Woo and Han, Gi-Tae and Sarkar, Ram},
+  author={Kundu, Rohit and Das, Ritacheta and Singh, Pawan Kumar and Geem, Zong Woo and Han, Gi-Tae and Sarkar, Ram},
   journal={PLoS One},
   year={2021},
   publisher={Nature}
