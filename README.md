@@ -47,7 +47,7 @@ If you use this repository, please consider citing our paper:
 ```
 Kundu R, Das R, Geem ZW, Han GT, Sarkar R. Pneumonia detection in chest X-ray images using an ensemble of deep learning models. PLoS One. 2021 Sep 7;16(9):e0256630. doi: 10.1371/journal.pone.0256630. PMID: 34492046.
 ```
-Or:
+Bibtex:
 ```
 @article{kundu2021net,
   title={Pneumonia detection in chest X-ray images using an ensemble of deep learning models},
