@@ -49,11 +49,14 @@ Kundu R, Das R, Geem ZW, Han GT, Sarkar R. Pneumonia detection in chest X-ray im
 ```
 Bibtex:
 ```
-@article{kundu2021net,
+@article{kundu2021pneumonia,
   title={Pneumonia detection in chest X-ray images using an ensemble of deep learning models},
-  author={Kundu, Rohit and Das, Ritacheta and Singh, Pawan Kumar and Geem, Zong Woo and Han, Gi-Tae and Sarkar, Ram},
-  journal={PLoS One},
+  author={Kundu, Rohit and Das, Ritacheta and Geem, Zong Woo and Han, Gi-Tae and Sarkar, Ram},
+  journal={PloS one},
+  volume={16},
+  number={9},
+  pages={e0256630},
   year={2021},
-  publisher={Nature}
+  publisher={Public Library of Science San Francisco, CA USA}
 }
 ```
